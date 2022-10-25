@@ -1,20 +1,39 @@
 import "bootstrap/dist/css/bootstrap.min.css";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AddUserForm from "./components/AddUserForm";
 import AllUsers from "./components/AllUsers";
+import { collection, query, onSnapshot, orderBy } from "firebase/firestore";
+import { db } from "../src/firebase/config";
+import { useDispatch } from "react-redux";
+import { AddNewUser } from "./actions/userActions";
 
 function App() {
-  const [users, setUsers] = useState([
+  const [users, setUsers] = useState([]);
+  const dispatch = useDispatch();
 
-  ]);
+  useEffect(() => {
+    const readData = async (e) => {
+      const q = query(collection(db, "student"));
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const studentArr = [];
+        querySnapshot.forEach((doc) => {
+          studentArr.push(doc.data());
+        });
+        dispatch(AddNewUser(studentArr));
+        // console.log(usersArr);
+      });
+    };
+    readData();
+  }, []);
 
+  
   const handleSubmit = (user) => {
     setUsers([
       ...users,
       {
         name: user.name,
-        position: user.studentIdNumber,
-        jerseyNumber: user.project,
+        studentidnumber: user.studentIdNumber,
+        project: user.project,
         id: new Date().getTime().toString(),
       },
     ]);

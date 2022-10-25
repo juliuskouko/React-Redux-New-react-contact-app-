@@ -4,17 +4,39 @@ import Form from "react-bootstrap/Form";
 import { v4 as uuidv4 } from "uuid";
 import { useDispatch, connect } from "react-redux";
 import { AddNewUser } from "../actions/userActions";
+import { doc, setDoc, serverTimestamp} from "firebase/firestore";
+// import {
+//   collection,
+//   addDoc,
+  
+// } from "firebase/firestore";
+import { db } from "../firebase/config";
 
 function AddUserForm({ AddNewUser }) {
   const [name, setName] = useState("");
   const [studentidnumber, setStudentIdNumber] = useState("");
   const [project, setProject] = useState("");
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    AddNewUser({ name, studentidnumber,project, id: uuidv4() });
+    // AddNewUser({ name, studentidnumber,project, id: uuidv4() });
     setName("");
     setStudentIdNumber("");
     setProject("");
+
+    const items = {
+      name,
+      studentidnumber,
+      project,
+      timestamp: serverTimestamp(),
+      id: uuidv4(),
+    };
+
+    // await setDoc(doc(db, "users", items.id),items);
+    try {
+      const docRef = await setDoc(doc(db, "student", items.id), items);
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return (

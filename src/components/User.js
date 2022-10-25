@@ -3,15 +3,42 @@ import { Modal } from "react-bootstrap";
 import EditUserForm from "./EditUserForm";
 import { useDispatch } from "react-redux";
 import { DeleteUser } from "../actions/userActions";
+import { doc, deleteDoc } from "firebase/firestore";
+import { db } from "../firebase/config";
+// import { async } from "@firebase/util";
+
+
 
 function User({ userData, deleteUser, handleEdit }) {
   const dispatch = useDispatch();
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const handleDelete = () => {
-    dispatch(DeleteUser(userData.id));
+  const handleDelete = async(e) => {
+    e.preventDefault();
+    // dispatch(DeleteUser(userData.id));
+    await deleteDoc(doc(db, "student", userData.id));
+    //   try {
+
+    //   } catch (e) {
+    //     console.log(e);
+    //   }
   };
+
+  const hadleDelete = async (e) => {
+    e.preventDefault();
+    //  dispatch(deleteUser(props.userBio.id));
+    // props.deleteUser(props.userBio.id);
+    // dispatch(deleteUser(props.userBio.id));
+    // props.deleteUser(props.userBio.id);
+    try {
+      await deleteDoc(doc(db, "student", userData.id));
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+
   return (
     <>
       <Modal show={show} onHide={handleClose}>

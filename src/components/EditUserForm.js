@@ -3,15 +3,45 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { useDispatch } from "react-redux";
 import { EditUser } from "../actions/userActions";
+import { db } from "../firebase/config";
+import {
+  doc,
+  setDoc,
+  updateDoc,
+  serverTimestamp,
+  timestamp,
+} from "firebase/firestore";
 
 function EditUserForm({ userData, deleteUser, handleEdit, hide }) {
   const dispatch = useDispatch();
 
   const [name, setName] = useState(userData.name);
-  const [studentIdNumber, setStudentIdNumber] = useState(userData.studentIdNumber);
+  const [studentIdNumber, setStudentIdNumber] = useState(
+    userData.studentIdNumber
+  );
   const [project, setProject] = useState(userData.project);
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // props.updateUser(props.userInfo.id,{username,email,mobile,password});
+    let userInfo = {
+      id: userData.id,
+      name,
+      studentIdNumber,
+      project,
+      timestamp: serverTimestamp(),
+    };
+
+    try {
+      const updateRef = doc(db, "student", userInfo.id);
+
+      // Set the "capital" field of the city 'DC'
+      await updateDoc(updateRef, userInfo);
+    } catch (e) {
+      console.log(e);
+    }
+
+    
     dispatch(EditUser({ id: userData.id, name, studentIdNumber, project }));
     setName("");
     setStudentIdNumber("");
