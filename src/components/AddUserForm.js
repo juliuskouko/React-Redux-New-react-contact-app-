@@ -76,7 +76,7 @@ function AddUserForm({ AddNewUser }) {
         />
       </Form.Group>
 
-      <Button onClick={handleSubmit} variant="danger" type="submit">
+      <Button onClick={handleSubmit} type="submit">
         Submit
       </Button>
     </Form>

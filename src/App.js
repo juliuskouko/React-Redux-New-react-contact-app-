@@ -3,11 +3,15 @@ import React, { useState, useEffect } from "react";
 import AddUserForm from "./components/AddUserForm";
 import AllUsers from "./components/AllUsers";
 import { collection, query, onSnapshot, orderBy } from "firebase/firestore";
-import { db } from "../src/firebase/config";
+import { db, auth } from "../src/firebase/config";
 import { useDispatch } from "react-redux";
 import { AddNewUser } from "./actions/userActions";
+import Routing from "./Routing";
+import { newloginUser } from "./actions/authAction";
+import { onAuthStateChanged } from "firebase/auth";
+import { connect } from "react-redux";
 
-function App() {
+function App({}) {
   const [users, setUsers] = useState([]);
   const dispatch = useDispatch();
 
@@ -26,7 +30,38 @@ function App() {
     readData();
   }, []);
 
-  
+  // useEffect(() => {
+  //   onAuthStateChanged(auth, (user)=> {
+  //     if (user) dispatch(newloginUser(user));
+  //     else {
+  //       dispatch(newloginUser(null));
+  //     }
+  //     // this is connect
+  //     // if (user) props.newloginUser(user)
+  //     // else props.newloginUser(null)
+  //   });
+  // }),[];
+
+  useEffect(()=>{
+    onAuthStateChanged(auth, (user)=>{
+    
+      if(user)dispatch(newloginUser());
+      else {dispatch(newloginUser(null));}
+
+    })
+  })
+
+  // useEffect(() => {
+	// 	auth.onAuthStateChanged((user) => {
+	// 		if (user) {
+	// 			dispatch(newloginUser(user));
+	// 		} else {
+	// 			dispatch(newloginUser(null));
+	// 		}
+	// 		console.log(user);
+	// 	});
+	// }, []);
+
   const handleSubmit = (user) => {
     setUsers([
       ...users,
@@ -50,22 +85,12 @@ function App() {
   };
   return (
     <>
-      <div className="container-fluid">
-        <div className="row mt-5">
-          <div className="col-md-6">
-            <AddUserForm addUser={handleSubmit} />
-          </div>
-          <div className="col-md-6">
-            <AllUsers
-              userData={users}
-              deleteUser={deleteUser}
-              handleEdit={handleEdit}
-            />
-          </div>
-        </div>
-      </div>
+      <Routing />
     </>
   );
 }
+const mapDispatchToProps = {
+  newloginUser: newloginUser,
+};
 
-export default App;
+export default connect(null, mapDispatchToProps)(App);

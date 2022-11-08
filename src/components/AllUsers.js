@@ -2,7 +2,7 @@ import { connect, useSelector } from "react-redux";
 import User from "./User";
 
 function AllUsers({ deleteUser, handleEdit }) {
-  const { users } = useSelector((store) => store);
+  const { users } = useSelector((store) => store.UsersReducer);
   return (
     <>
       <div className="container" style={{marginTop: "1.2em"}}>
